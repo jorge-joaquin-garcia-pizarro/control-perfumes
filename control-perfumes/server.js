@@ -11,13 +11,13 @@ app.use(cors());
 app.use(express.json());
 app.use(express.static('public'));
 
-// Configuración de PostgreSQL usando variable de entorno SUPABASE_URL
+// Configuración de PostgreSQL (usa variable de entorno)
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
-  ssl: { rejectUnauthorized: false } // Necesario para Supabase
+  ssl: { rejectUnauthorized: false }
 });
 
-// Crear tabla si no existe (al iniciar el servidor)
+// Crear tabla si no existe
 pool.query(`
   CREATE TABLE IF NOT EXISTS perfumes (
     id SERIAL PRIMARY KEY,
@@ -26,22 +26,18 @@ pool.query(`
     cantidad INTEGER NOT NULL,
     precio_venta REAL NOT NULL
   )
-`).catch(err => console.error('Error creando tabla:', err));
+`).catch(err => console.log('Tabla ya existe o error:', err.message));
 
-// ---------- RUTAS API ----------
-
-// Obtener todos los perfumes
+// Rutas API
 app.get('/api/perfumes', async (req, res) => {
   try {
     const result = await pool.query('SELECT * FROM perfumes ORDER BY id DESC');
     res.json(result.rows);
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Error al obtener perfumes' });
+    res.status(500).json({ error: err.message });
   }
 });
 
-// Agregar un perfume
 app.post('/api/perfumes', async (req, res) => {
   const { nombre, marca, cantidad, precio_venta } = req.body;
   if (!nombre || !marca || cantidad === undefined || !precio_venta) {
@@ -54,12 +50,10 @@ app.post('/api/perfumes', async (req, res) => {
     );
     res.json({ id: result.rows[0].id });
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Error al agregar perfume' });
+    res.status(500).json({ error: err.message });
   }
 });
 
-// Vender perfume (resta cantidad)
 app.put('/api/vender/:id', async (req, res) => {
   const id = req.params.id;
   const { cantidad } = req.body;
@@ -68,19 +62,17 @@ app.put('/api/vender/:id', async (req, res) => {
   }
   try {
     const { rows } = await pool.query('SELECT cantidad FROM perfumes WHERE id = $1', [id]);
-    if (rows.length === 0) return res.status(404).json({ error: 'Perfume no encontrado' });
+    if (rows.length === 0) return res.status(404).json({ error: 'No encontrado' });
     const stockActual = rows[0].cantidad;
     if (stockActual < cantidad) return res.status(400).json({ error: 'Stock insuficiente' });
     const nuevaCantidad = stockActual - cantidad;
     await pool.query('UPDATE perfumes SET cantidad = $1 WHERE id = $2', [nuevaCantidad, id]);
     res.json({ success: true, nuevaCantidad });
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Error al vender' });
+    res.status(500).json({ error: err.message });
   }
 });
 
-// Eliminar perfume
 app.delete('/api/perfumes/:id', async (req, res) => {
   const id = req.params.id;
   try {
@@ -88,17 +80,13 @@ app.delete('/api/perfumes/:id', async (req, res) => {
     if (result.rowCount === 0) return res.status(404).json({ error: 'No encontrado' });
     res.json({ success: true });
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Error al eliminar' });
+    res.status(500).json({ error: err.message });
   }
 });
 
-// Iniciar servidor solo en desarrollo local
+// Solo local
 if (process.env.NODE_ENV !== 'production') {
-  app.listen(PORT, () => {
-    console.log(`✅ Servidor local corriendo en http://localhost:${PORT}`);
-  });
+  app.listen(PORT, () => console.log(`Servidor en http://localhost:${PORT}`));
 }
 
-// Exportar app para Vercel
 module.exports = app;
