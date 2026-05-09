@@ -1,0 +1,114 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+}
+
+body {
+  background: #f5f0eb;
+  padding: 2rem;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+h1 {
+  text-align: center;
+  color: #5a3e2b;
+  margin-bottom: 2rem;
+  font-size: 2rem;
+}
+
+.form-card {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 1rem;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  margin-bottom: 2rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: flex-end;
+}
+
+.form-card h2 {
+  width: 100%;
+  margin-bottom: 0.5rem;
+  font-size: 1.3rem;
+  color: #2c3e2f;
+}
+
+.form-card input {
+  flex: 1;
+  min-width: 150px;
+  padding: 0.7rem;
+  border: 1px solid #ddd;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+}
+
+.form-card button {
+  background: #2c5f2d;
+  color: white;
+  border: none;
+  padding: 0.7rem 1.5rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  font-weight: bold;
+  transition: 0.2s;
+}
+
+.form-card button:hover {
+  background: #1f4520;
+}
+
+.stock-table {
+  background: white;
+  border-radius: 1rem;
+  overflow-x: auto;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  padding: 1rem;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th, td {
+  text-align: left;
+  padding: 0.8rem;
+  border-bottom: 1px solid #eee;
+}
+
+th {
+  background-color: #f8f3ef;
+  color: #5a3e2b;
+}
+
+td button {
+  background: #97bc62;
+  border: none;
+  padding: 0.3rem 0.7rem;
+  margin-right: 0.5rem;
+  border-radius: 0.3rem;
+  cursor: pointer;
+  font-size: 0.8rem;
+  font-weight: bold;
+}
+
+td button.vender {
+  background: #ffc857;
+}
+
+td button.eliminar {
+  background: #d9534f;
+  color: white;
+}
+
+td button:hover {
+  opacity: 0.8;
+}
